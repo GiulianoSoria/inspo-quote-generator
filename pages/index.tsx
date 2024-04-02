@@ -1,9 +1,30 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "@/styles/Home.module.css";
-import { GradientBackgroundCon } from "@/components/QuoteGenerator/QuoteGeneratorElements";
+
+// Components
+import { 
+  BackgroundImage1,
+  BackgroundImage2,
+  FooterCon,
+  FooterLink,
+  GenerateQuoteButton,
+  GenerateQuoteButtonText,
+  GradientBackgroundCon,
+  QuoteGeneratorCon,
+  QuoteGeneratorInnerCon,
+  QuoteGeneratorSubtitle,
+  QuoteGeneratorTitle
+} from "@/components/QuoteGenerator/QuoteGeneratorElements";
+
+// Assets
+import Clouds1 from "@/assets/cloudy.png";
+import Clouds2 from "@/assets/sunny.png";
+import { useState } from "react";
 
 export default function Home() {
+  const [numberOfQuotes, setNumberOfQuotes] = useState<Number | null>(0);
+
   return (
     <>
       <Head>
@@ -25,7 +46,7 @@ export default function Home() {
         /> */}
 
         {/* Quote Generator */}
-        {/* <QuoteGeneratorCon>
+        <QuoteGeneratorCon>
           <QuoteGeneratorInnerCon>
             <QuoteGeneratorTitle>
               Daily Inspiration Generator
@@ -43,21 +64,21 @@ export default function Home() {
               </FooterLink>.
             </QuoteGeneratorSubtitle>
 
-            <GenerateQuoteButton onClick={handleOpenGenerator}>
-              <GenerateQuoteButtonText >
+            <GenerateQuoteButton onClick={null}>
+              <GenerateQuoteButtonText>
                 Make a Quote
               </GenerateQuoteButtonText>
             </GenerateQuoteButton>
           </QuoteGeneratorInnerCon>
-        </QuoteGeneratorCon> */}
+        </QuoteGeneratorCon>
 
-        {/* Background images */}
-        {/* <BackgroundImage1 src={Clouds1} height="300" alt="CloudyBackground1" /> */}
+        {/* Background Images */}
+        <BackgroundImage1 src={Clouds1} height="300" alt="CloudyBackground1" />
 
-        {/* <BackgroundImage2 src={Clouds2} height="300" alt="CloudyBackground2" /> */}
+        <BackgroundImage2 src={Clouds2} height="300" alt="CloudyBackground2" />
 
         {/* Footer */}
-        {/* <FooterCon>
+        <FooterCon>
           <>
             Quotes Generated: {numberOfQuotes}
             <br />
@@ -71,7 +92,7 @@ export default function Home() {
               @GiulianoSoria{" "}
             </FooterLink>
           </>
-        </FooterCon> */}
+        </FooterCon>
       </GradientBackgroundCon>
     </>
   );
