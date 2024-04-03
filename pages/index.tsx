@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "@/styles/Home.module.css";
@@ -20,10 +21,62 @@ import {
 // Assets
 import Clouds1 from "@/assets/cloudy.png";
 import Clouds2 from "@/assets/sunny.png";
-import { useState } from "react";
+import { GraphQLResult, generateClient } from "aws-amplify/api";
+import { quotesQueryName } from "@/src/graphql/queries";
+
+// interface for our DynamoDB object
+interface UpdateQuoteInfoData {
+  id: string;
+  queryName: string;
+  quotesGenerated: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// type guard for our fetch function
+function isGraphQLResultForQuotesQueryName(response: any): response is GraphQLResult<{
+  quotesQueryName: {
+    items: [UpdateQuoteInfoData];
+  };
+}> {
+  return response.data && response.data.quotesQueryName && response.data.quotesQueryName.items;
+}
 
 export default function Home() {
   const [numberOfQuotes, setNumberOfQuotes] = useState<Number | null>(0);
+  const client = generateClient();
+
+  // Function to fetch or DynamoDB object (quotes generated)
+  const updateQuoteInfo = async () => {
+    try {
+      const response = await client.graphql({
+        query: quotesQueryName,
+        authMode: "iam",
+        variables: {
+          queryName: "LIVE"
+        },
+      });
+      
+      // Create type guard
+      if (!isGraphQLResultForQuotesQueryName(response)) {
+        throw new Error('Unexpected response from client.graphql');
+      }
+      
+      if (!response.data) {
+        throw new Error('Response data is undefined');
+      }
+      
+      const receivedNumberOfQuotes = response.data.quotesQueryName.items[0].quotesGenerated;
+      
+      setNumberOfQuotes(receivedNumberOfQuotes);
+    } catch (error) {
+      console.log('error getting quote data', error);
+    }
+  }
+  
+  useEffect(() => {
+    updateQuoteInfo();
+  });
 
   return (
     <>
@@ -64,7 +117,9 @@ export default function Home() {
               </FooterLink>.
             </QuoteGeneratorSubtitle>
 
-            <GenerateQuoteButton onClick={null}>
+            <GenerateQuoteButton 
+              // onClick={null}
+            >
               <GenerateQuoteButtonText>
                 Make a Quote
               </GenerateQuoteButtonText>
